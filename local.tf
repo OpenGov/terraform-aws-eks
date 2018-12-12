@@ -31,8 +31,8 @@ locals {
     kubelet_extra_args            = ""                              # This string is passed directly to kubelet if set. Useful for adding labels or taints.
     subnets                       = "${join(",", var.subnets)}"     # A comma delimited string of subnets to place the worker nodes in. i.e. subnet-123,subnet-456,subnet-789
     autoscaling_enabled           = false                           # Sets whether policy and matching tags will be added to allow autoscaling.
-    autoscaling_label_key         = ""                              # Required for scaling down the worker group to zero nodes. Must match key name for the node label.
-    autoscaling_label_value       = ""                              # Required for scaling down the worker group to zero nodes. Must match value name for the key of the node label.
+    autoscaling_node_label_key    = ""                              # The node label key that is required for scaling down the worker group to zero nodes. Must match key name for the node label.
+    autoscaling_node_label_value  = ""                              # The node label value that is required for scaling down the worker group to zero nodes. Must match value name for the key of the node label.
     additional_security_group_ids = ""                              # A comma delimited list of additional security group ids to include in worker launch config
     protect_from_scale_in         = false                           # Prevent AWS from scaling in, so that cluster-autoscaler is solely responsible.
     iam_role_id                   = "${local.default_iam_role_id}"  # Use the specified IAM role if set.
