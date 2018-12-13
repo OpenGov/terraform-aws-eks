@@ -15,6 +15,7 @@ locals {
     asg_desired_capacity          = "1"                             # Desired worker capacity in the autoscaling group.
     asg_max_size                  = "3"                             # Maximum worker capacity in the autoscaling group.
     asg_min_size                  = "1"                             # Minimum worker capacity in the autoscaling group.
+    asg_metrics                   = ""                              # A comma delimited string of of metrics to colle0t for the ASG (GroupMinSize, GroupMaxSize, GroupDesiredCapacity, GroupInServiceInstances, GroupPendingInstances, GroupStandbyInstances, GroupTerminatingInstances, GroupTotalInstances)
     instance_type                 = "m4.large"                      # Size of the workers instances.
     spot_price                    = ""                              # Cost of spot instance.
     placement_tenancy             = ""                              # The tenancy of the instance. Valid values are "default" or "dedicated".
@@ -30,6 +31,8 @@ locals {
     kubelet_extra_args            = ""                              # This string is passed directly to kubelet if set. Useful for adding labels or taints.
     subnets                       = "${join(",", var.subnets)}"     # A comma delimited string of subnets to place the worker nodes in. i.e. subnet-123,subnet-456,subnet-789
     autoscaling_enabled           = false                           # Sets whether policy and matching tags will be added to allow autoscaling.
+    autoscaling_node_label_key    = ""                              # The node label key that is required for scaling down the worker group to zero nodes. Must match key name for the node label.
+    autoscaling_node_label_value  = ""                              # The node label value that is required for scaling down the worker group to zero nodes. Must match value name for the key of the node label.
     additional_security_group_ids = ""                              # A comma delimited list of additional security group ids to include in worker launch config
     protect_from_scale_in         = false                           # Prevent AWS from scaling in, so that cluster-autoscaler is solely responsible.
     iam_role_id                   = "${local.default_iam_role_id}"  # Use the specified IAM role if set.
@@ -140,6 +143,12 @@ locals {
     "r4.4xlarge"   = true
     "r4.8xlarge"   = true
     "r4.16xlarge"  = true
+    "r5.large"     = true
+    "r5.xlarge"    = true
+    "r5.2xlarge"   = true
+    "r5.4xlarge"   = true
+    "r5.12xlarge"  = true
+    "r5.24xlarge"  = true
     "t1.micro"     = false
     "t2.nano"      = false
     "t2.micro"     = false

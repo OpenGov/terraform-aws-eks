@@ -8,13 +8,15 @@ resource "aws_autoscaling_group" "workers" {
   vpc_zone_identifier   = ["${split(",", coalesce(lookup(var.worker_groups[count.index], "subnets", ""), local.workers_group_defaults["subnets"]))}"]
   protect_from_scale_in = "${lookup(var.worker_groups[count.index], "protect_from_scale_in", local.workers_group_defaults["protect_from_scale_in"])}"
   suspended_processes   = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], "suspended_processes", ""), local.workers_group_defaults["suspended_processes"])))}"]
+  enabled_metrics       = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], "asg_metrics", ""), local.workers_group_defaults["asg_metrics"])))}"]
   count                 = "${var.worker_group_count}"
 
   tags = ["${concat(
     list(
       map("key", "Name", "value", "${aws_eks_cluster.this.name}-${lookup(var.worker_groups[count.index], "name", count.index)}-eks_asg", "propagate_at_launch", true),
       map("key", "kubernetes.io/cluster/${aws_eks_cluster.this.name}", "value", "owned", "propagate_at_launch", true),
-      map("key", "k8s.io/cluster-autoscaler/${lookup(var.worker_groups[count.index], "autoscaling_enabled", local.workers_group_defaults["autoscaling_enabled"]) == 1 ? "enabled" : "disabled"  }", "value", "true", "propagate_at_launch", false)
+      map("key", "k8s.io/cluster-autoscaler/${lookup(var.worker_groups[count.index], "autoscaling_enabled", local.workers_group_defaults["autoscaling_enabled"]) == 1 ? "enabled" : "disabled"  }", "value", "true", "propagate_at_launch", false),
+      map("key", "k8s.io/cluster-autoscaler/node-template/label${lookup(var.worker_groups[count.index], "autoscaling_node_label_key", "") == "" ? "-autoscaling-to-zero-nodes-disabled" : "/${lookup(var.worker_groups[count.index], "autoscaling_node_label_key", "")}"}", "value", "${lookup(var.worker_groups[count.index], "autoscaling_node_label_value", "")}", "propagate_at_launch", (lookup(var.worker_groups[count.index], "autoscaling_node_label_key", "") == "" ? false : true)),
     ),
     local.asg_tags)
   }"]
