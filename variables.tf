@@ -39,10 +39,20 @@ variable "map_accounts_count" {
   default     = 0
 }
 
+#variable "map_roles" {
+#  description = "Additional IAM roles to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
+#  type        = list(string)
+#  default     = []
+#}
+
 variable "map_roles" {
-  description = "Additional IAM roles to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
-  type        = list(string)
-  default     = []
+  description = "Additional IAM roles to add to the aws-auth configmap. See examples/basic/variables.tf for example format."
+  type = list(object({
+    role_arn  = string
+    username = string
+    group   = string
+  }))
+  default = []
 }
 
 variable "map_roles_count" {
@@ -51,10 +61,21 @@ variable "map_roles_count" {
   default     = 0
 }
 
+#variable "map_users" {
+#  description = "Additional IAM users to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
+#  type        = list(string)
+#  default     = []
+#}
+
+
 variable "map_users" {
-  description = "Additional IAM users to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
-  type        = list(string)
-  default     = []
+  description = "Additional IAM users to add to the aws-auth configmap. See examples/basic/variables.tf for example format."
+  type = list(object({
+    user_arn = string
+    username = string
+    group    = string
+  }))
+  default = []
 }
 
 variable "map_users_count" {
