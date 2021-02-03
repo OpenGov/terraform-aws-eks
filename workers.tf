@@ -135,7 +135,6 @@ resource "aws_launch_configuration" "workers" {
         local.workers_group_defaults["additional_security_group_ids"],
       ),
     ])
-  }
 
   iam_instance_profile = element(aws_iam_instance_profile.workers.*.id, count.index)
   image_id = lookup(
